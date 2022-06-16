@@ -20,7 +20,13 @@ def random_img(width, height):
 '''
     Generates the next RGB Image of size width*height
 '''
-counter_array = np.zeros((WIDTH, HEIGHT, 3), dtype=np.uint8)
+## Using sample image
+im = Image.open('281379.jpg')
+# im = random_img(WIDTH, HEIGHT)
+counter_array = np.asarray(im, dtype=np.uint8)
+#
+
+# counter_array = np.zeros((WIDTH, HEIGHT, 3), dtype=np.uint8)
 # counter_array = np.array(counter_array)
 def next_img(width, height):
     global counter_array
@@ -36,17 +42,17 @@ def get_next_array(counter_array, i, j, k):
         return get_next_array(counter_array, i, j + 1, 0)
 
     # SII Estamos en el ultimo pixel de la fila
-    if j == 256:
+    if j == WIDTH:
         return get_next_array(counter_array, i + 1, 0, 0)
-    if i == 256:
+    if i == HEIGHT:
         return counter_array
 
     # SII Estamos en el ultimo valor RGB (255)
-    if counter_array[i][j][k] == 255:
+    if counter_array[i][j][k] >= 255 - 85:
         counter_array[i][j][k] = 0
         return get_next_array(counter_array, i, j, k + 1)
     else:
-        counter_array[i][j][k] += 1
+        counter_array[i][j][k] += 85
 
     return counter_array
     # return np.array(counter_array, dtype=np.uint8)
@@ -92,10 +98,9 @@ old_label_image = None
 def Refresher():
     try:
         # image1 = random_img(256, 256)
-        image1 = next_img(256, 256)
+        image1 = next_img(WIDTH, HEIGHT)
         # print(image1)
         image1.save('tst.png')
-        sleep(0.1)
         # image1.show()
         root.geometry('%dx%d' % (image1.size[0],image1.size[1]))
         tkpi = ImageTk.PhotoImage(image1)
@@ -112,7 +117,7 @@ def Refresher():
     root.after(1, Refresher)
 
 root = tkinter.Tk()
-root.geometry('+%d+%d' % (1024, 480))
+root.geometry('+%d+%d' % (WIDTH, HEIGHT))
 Refresher()
 root.mainloop() # wait until user clicks the window
 
